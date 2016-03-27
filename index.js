@@ -8,27 +8,31 @@ var async = require('async');
 
 module.exports = function(args) {
 	return function(files, metalsmith, done) {
-		if (!args.src) {
-			new Error('metalsmith-image-resizer: "src" arg is required')
+		if (!args.glob) {
+			return done(new Error('metalsmith-image-resizer: "glob" arg is required'))
+		}
+		if (!args.width) {
+			return done(new Error('metalsmith-image-resizer: "width" arg is required'))
+		}
+		if (!args.height) {
+			return done(new Error('metalsmith-image-resizer: "height" arg is required'))
 		}
 		async.map(Object.keys(files), function(fileName, cb) {
-			debug(fileName)
-			resizeFile(fileName, args, files, results, cb)
+			resizeFile(fileName, args, files, cb)
 		}, function(err) {
 			return done(err)
 		})
 	}
 }
-var resizeFile = function(fileName, args, files, results, cb) {
-	if (minimatch(fileName, args.src)) {
-		newName = path.join(path.dirname(fileName), path.basename(fileName, path.extname(fileName)) + "_resized" + path.extname(fileName))
-		sharp(files[fileName].contents).resize(100, 100).toBuffer(function(err, buffer) {
-			files[newName] = {
+var resizeFile = function(fileName, args, files, cb) {
+	if (minimatch(fileName, args.glob)) {
+		sharp(files[fileName].contents).resize(args.width, args.height).toBuffer(function(err, buffer) {
+			files[fileName] = {
 				contents: buffer
 			}
-			cb()
+			cb(err)
 		})
 	} else {
-		cb()
+		cb(null)
 	}
 }

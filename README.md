@@ -25,7 +25,7 @@ Metalsmith(__dirname)
 	.source(__dirname + "/src")
 	.destination(__dirname + "/build")
 	.use(imageResizer({
-		src: "img/*" // glob for the images you'd like to resize
+		glob: "img/*" // glob for the images you'd like to resize
 	}))
 	.build(function(err) {
 		if (err) throw err;
@@ -38,3 +38,5 @@ Metalsmith(__dirname)
 --------------------------------------------------------------------------------
 
 Modeled after [@tomterl](https://github.com/tomterl)'s [metalsmith-convert](https://github.com/tomterl/metalsmith-convert) plugin.
+
+notes: should use `contain/cover` instead of `sharp`'s `min/max`
