@@ -1,3 +1,5 @@
+**disclaimer:** not published yet.
+
 # metalsmith-image-resizer
 A non-imagemagick/graphicsmagick-dependent image resizing plugin for [Metalsmith](http://www.metalsmith.io/).
 
