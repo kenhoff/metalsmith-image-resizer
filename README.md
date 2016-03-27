@@ -12,6 +12,25 @@ npm install metalsmith-image-resizer --save
 `metalsmith-image-resizer` depends on [`sharp`](http://sharp.dimens.io/). If you're on Mac OS X, you'll need to install libvips (`brew install homebrew/science/vips`). If you're on Linux or Windows, no other dependency should be needed.
 
 ## Usage
+
+### API
+
+```
+var Metalsmith = require('metalsmith');
+var imageResizer = require('metalsmith-image-resizer');
+
+Metalsmith(__dirname)
+	.source(__dirname + "/src")
+	.destination(__dirname + "/build")
+	.use(imageResizer({
+		src: "img/*" // glob for the images you'd like to resize
+	}))
+	.build(function(err) {
+		if (err) throw err;
+	})
+```
+
+
 ## Options
 
 --------------------------------------------------------------------------------
