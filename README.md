@@ -1,7 +1,5 @@
-**disclaimer:** not published yet.
-
 # metalsmith-image-resizer
-A non-imagemagick/graphicsmagick-dependent image resizing plugin for [Metalsmith](http://www.metalsmith.io/).
+An image resizing plugin for [Metalsmith](http://www.metalsmith.io/). Not dependent on imagemagick/graphicsmagick!
 
 ## Installation
 
@@ -25,18 +23,38 @@ Metalsmith(__dirname)
 	.source(__dirname + "/src")
 	.destination(__dirname + "/build")
 	.use(imageResizer({
-		glob: "img/*" // glob for the images you'd like to resize
+		glob: "img/backgrounds/*",
+		width: 1920,
+		height: 1080
 	}))
 	.build(function(err) {
 		if (err) throw err;
 	})
 ```
 
+You can use `imageResizer` multiple times to resize different globs of images with different options:
 
-## Options
+```
+Metalsmith(__dirname)
+	.source(__dirname + "/src")
+	.destination(__dirname + "/build")
+	.use(imageResizer({
+		glob: "img/backgrounds/*",
+		width: 1920,
+		height: 1080
+	}))
+	.use(imageResizer({
+		glob: "img/people/*",
+		width: 200,
+		height: 200
+	}))
+	.build(function(err) {
+		if (err) throw err;
+	})
+```
 
---------------------------------------------------------------------------------
+## Credits
 
 Modeled after [@tomterl](https://github.com/tomterl)'s [metalsmith-convert](https://github.com/tomterl/metalsmith-convert) plugin.
 
-notes: should use `contain/cover` instead of `sharp`'s `min/max`
+This is my (@kenhoff's) first time maintaining an OSS project! Tips, suggestions, issues, and pull requests are all totally appreciated.
