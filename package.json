@@ -1,6 +1,6 @@
 {
   "name": "metalsmith-image-resizer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "An image resizing plugin for Metalsmith. Not dependent on imagemagick/graphicsmagick!",
   "main": "index.js",
   "scripts": {
