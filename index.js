@@ -26,12 +26,24 @@ module.exports = function(args) {
 }
 var resizeFile = function(fileName, args, files, cb) {
 	if (minimatch(fileName, args.glob)) {
-		sharp(files[fileName].contents).resize(args.width, args.height).toBuffer(function(err, buffer) {
+		var resizedFile = sharp(files[fileName].contents).resize(args.width, args.height)
+		if (args.ext) {
+			resizedFile.toFormat(args.ext)
+				// change extension on file written
+
+			fileNameSplit = fileName.split(".")
+			newFileName = [fileNameSplit.slice(0, fileNameSplit.length - 1).join(), args.ext].join(".")
+			files[newFileName] = files[fileName]
+			delete files[fileName]
+			fileName = newFileName
+		}
+		resizedFile.toBuffer(function(err, buffer) {
 			files[fileName] = {
 				contents: buffer
 			}
 			cb(err)
 		})
+
 	} else {
 		cb(null)
 	}

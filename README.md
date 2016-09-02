@@ -53,6 +53,26 @@ Metalsmith(__dirname)
 	})
 ```
 
+You can also specify an extension that you'd like to convert your photos to:
+
+```
+var Metalsmith = require('metalsmith');
+var imageResizer = require('metalsmith-image-resizer');
+
+Metalsmith(__dirname)
+	.source(__dirname + "/src")
+	.destination(__dirname + "/build")
+	.use(imageResizer({
+		glob: "img/backgrounds/*",
+		width: 1920,
+		height: 1080,
+		ext: "jpeg"
+	}))
+	.build(function(err) {
+		if (err) throw err;
+	})
+```
+
 ## Credits
 
 Modeled after [@tomterl](https://github.com/tomterl)'s [metalsmith-convert](https://github.com/tomterl/metalsmith-convert) plugin.
