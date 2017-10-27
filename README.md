@@ -11,6 +11,13 @@ npm install metalsmith-image-resizer --save
 
 `metalsmith-image-resizer` depends on [`sharp`](http://sharp.dimens.io/). If you're on Mac OS X, you'll need to install libvips (`brew install homebrew/science/vips`). If you're on Linux or Windows, no other dependency should be needed.
 
+On Windows (10) if you do not have `sharp` installed and get build errors during `metalsmith-image-resizer` installation (missing VCBuild.exe, other build errors etc.), you might want to try:
+
+```
+npm install --global --production windows-build-tools
+npm install metalsmith-image-resizer --save
+```
+
 ## Usage
 
 ### API
