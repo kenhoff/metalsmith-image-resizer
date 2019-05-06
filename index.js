@@ -11,11 +11,8 @@ module.exports = function(args) {
 		if (!args.glob) {
 			return done(new Error('metalsmith-image-resizer: "glob" arg is required'))
 		}
-		if (!args.width) {
-			return done(new Error('metalsmith-image-resizer: "width" arg is required'))
-		}
-		if (!args.height) {
-			return done(new Error('metalsmith-image-resizer: "height" arg is required'))
+		if (!args.width && !args.height) {
+			return done(new Error('metalsmith-image-resizer: "width" or "height" arg is required'))
 		}
 		async.map(Object.keys(files), function(fileName, cb) {
 			resizeFile(fileName, args, files, cb)
@@ -26,7 +23,10 @@ module.exports = function(args) {
 }
 var resizeFile = function(fileName, args, files, cb) {
 	if (minimatch(fileName, args.glob)) {
-		var resizedFile = sharp(files[fileName].contents).resize(args.width, args.height)
+		var resizedFile = sharp(files[fileName].contents).resize({
+			width: args.width,
+			height: args.height
+		})
 		if (args.ext) {
 			resizedFile.toFormat(args.ext)
 				// change extension on file written
