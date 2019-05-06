@@ -23,14 +23,14 @@ module.exports = function(args) {
 }
 var resizeFile = function(fileName, args, files, cb) {
 	if (minimatch(fileName, args.glob)) {
+		console.log(sharp(files[fileName].contents).resize);
 		var resizedFile = sharp(files[fileName].contents).resize({
 			width: args.width,
 			height: args.height
 		})
 		if (args.ext) {
 			resizedFile.toFormat(args.ext)
-				// change extension on file written
-
+			// change extension on file written
 			fileNameSplit = fileName.split(".")
 			newFileName = [fileNameSplit.slice(0, fileNameSplit.length - 1).join(), args.ext].join(".")
 			files[newFileName] = files[fileName]
