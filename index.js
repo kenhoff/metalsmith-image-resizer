@@ -5,6 +5,7 @@ var minimatch = require('minimatch');
 var debug = require('debug')('metalsmith-image-resizer');
 var async = require('async');
 
+
 module.exports = function(args) {
 	return function(files, metalsmith, done) {
 		if (!args.glob) {
@@ -32,7 +33,14 @@ module.exports = function(args) {
 var resizeFile = function(fileName, args, files, cb) {
 	if (minimatch(fileName, args.glob)) {
 		if (!args.fake) {
-			var resizedFile = sharp(files[fileName].contents).resize({
+			var sharpInstance = sharp(files[fileName].contents);
+			if (args.quality) {
+				sharpInstance = sharpInstance.jpeg({quality: args.quality, progressive: true});
+			}
+			if (args.grayscale) {
+				sharpInstance = sharpInstance.grayscale();
+			}
+			var resizedFile = sharpInstance.resize({
 				width: args.width,
 				height: args.height
 			})
