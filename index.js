@@ -11,14 +11,20 @@ module.exports = function(args) {
 		if (!args.glob) {
 			return done(new Error('metalsmith-image-resizer: "glob" arg is required'))
 		}
-		if (!args.width) {
-			return done(new Error('metalsmith-image-resizer: "width" arg is required'))
-		}
-		if (!args.height) {
-			return done(new Error('metalsmith-image-resizer: "height" arg is required'))
+		if (!args.width && !args.height && !args.sizes) {
+			return done(new Error('metalsmith-image-resizer: "width" or "height" arg is required'))
 		}
 		async.map(Object.keys(files), function(fileName, cb) {
-			resizeFile(fileName, args, files, cb)
+			if (args.sizes) {
+				async.each(args.sizes, (size, cb) => {
+					resizeFile(fileName, {
+						...args,
+						...size
+					}, files, cb)
+				}, cb)
+			} else {
+				resizeFile(fileName, args, files, cb)
+			}
 		}, function(err) {
 			return done(err)
 		})
@@ -26,23 +32,52 @@ module.exports = function(args) {
 }
 var resizeFile = function(fileName, args, files, cb) {
 	if (minimatch(fileName, args.glob)) {
-		var resizedFile = sharp(files[fileName].contents).resize(args.width, args.height)
+		if (!args.fake) {
+			var sharpInstance = sharp(files[fileName].contents);
+			if (args.quality) {
+				sharpInstance = sharpInstance.jpeg({quality: args.quality, progressive: true});
+			}
+			if (args.grayscale) {
+				sharpInstance = sharpInstance.grayscale();
+			}
+			var resizedFile = sharpInstance.resize({
+				width: args.width,
+				height: args.height
+			})
+		}
+		var size = args.width || '';
+		if (size && args.height) {
+			size += 'x';
+		}
+		if (args.height) {
+			size += args.height;
+		}
 		if (args.ext) {
 			resizedFile.toFormat(args.ext)
-				// change extension on file written
-
+			// change extension on file written
 			fileNameSplit = fileName.split(".")
 			newFileName = [fileNameSplit.slice(0, fileNameSplit.length - 1).join(), args.ext].join(".")
 			files[newFileName] = files[fileName]
 			delete files[fileName]
 			fileName = newFileName
 		}
-		resizedFile.toBuffer(function(err, buffer) {
-			files[fileName] = {
-				contents: buffer
-			}
-			cb(err)
-		})
+		if (args.includeSize) {
+			fileNameSplit = fileName.split(".")
+			newFileName = [fileNameSplit.slice(0, fileNameSplit.length - 1).join(), size, fileNameSplit.pop()].join(".")
+			files[newFileName] = files[fileName]
+			// delete files[fileName]
+			fileName = newFileName
+		}
+		if (args.fake) {
+			cb();
+		} else {
+			resizedFile.toBuffer(function(err, buffer) {
+				files[fileName] = {
+					contents: buffer
+				}
+				cb(err)
+			})
+		}
 
 	} else {
 		cb(null)
